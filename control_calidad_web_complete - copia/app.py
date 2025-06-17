@@ -233,9 +233,3 @@ def vaciado():
       connected=sorted(connected_users),
       messages=pd.read_sql_query("SELECT * FROM messages ORDER BY id DESC LIMIT 20",sqlite3.connect(DB_NAME)).to_dict('records')
     )
-
-init_db()
-application = app  # Para PythonAnywhere
-
-if __name__ == '__main__':
-    app.run(debug=True)
