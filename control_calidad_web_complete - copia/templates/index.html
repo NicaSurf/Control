@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Control de Calidad – Cono de Abrams</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .bg-header { background-color: #0d6efd; }
+    .form-label { font-weight: 600; }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="d-flex justify-content-end align-items-center p-3" style="background:#1082f7;">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-light mx-1">Inicio</a>
+    <a href="{{ url_for('mensajes') }}" class="btn btn-outline-light mx-1 position-relative">
+      Mensaje
+      {% if nmensajes and nmensajes > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          {{ nmensajes }}
+        </span>
+      {% endif %}
+    </a>
+    <a href="{{ url_for('historial') }}" class="btn btn-outline-light mx-1">Historial</a>
+    <a href="{{ url_for('logout') }}" class="btn btn-danger mx-1">Salir</a>
+</div>
+
+
+  <!-- Toasts omitidos para brevedad -->
+
+  <div class="container py-5">
+    <div class="bg-header text-white text-center p-4 rounded mb-4">
+      <h2 class="mb-0">Incostas miramar</h2>
+      <small>Usuario: {{ user }} ({{ role }})</small>
+    </div>
+
+    <!-- Volumen acumulado omitido -->
+
+    <form action="{{ url_for('registrar') }}" method="post" class="bg-white p-4 rounded shadow-sm mb-5">
+      <div class="row g-3">
+        <!-- 1. Fecha -->
+        <div class="col-md-4">
+          <label class="form-label">Fecha</label>
+          <input type="date" name="fecha" class="form-control" required>
+        </div>
+        <!-- 2. Camión # -->
+        <div class="col-md-4">
+          <label class="form-label">Camión #</label>
+          <input type="text" name="camion_num" class="form-control" required>
+        </div>
+        <!-- 3. Placa -->
+        <div class="col-md-4">
+          <label class="form-label">Placa</label>
+          <input type="text" name="placa" class="form-control" required>
+        </div>
+        <!-- 4. Volumen -->
+        <div class="col-md-4">
+          <label class="form-label">Volumen (m³)</label>
+          <input type="number" step="0.01" name="volumen" class="form-control" required>
+        </div>
+        <!-- 5. Boleta -->
+        <div class="col-md-4">
+          <label class="form-label">Boleta #</label>
+          <input type="text" name="boleta" class="form-control" required>
+        </div>
+        <!-- 6. Punto de Control -->
+        <div class="col-md-4">
+          <label class="form-label">Punto de Control</label>
+          <input type="text" name="punto_control" class="form-control" required>
+        </div>
+        <!-- 7. Hora de Control -->
+        <div class="col-md-4">
+          <label class="form-label">Hora de Control</label>
+          <input type="time" name="hora_control" class="form-control" required>
+        </div>
+        <!-- 8. Temperatura -->
+        <div class="col-md-4">
+          <label class="form-label">Temperatura (°C)</label>
+          <input type="number" step="0.1" name="temperatura" class="form-control" required>
+        </div>
+        <!-- 9. Revenimiento -->
+        <div class="col-md-4">
+          <label class="form-label">Revenimiento (″)</label>
+          <input type="text" name="revenimiento" class="form-control" required>
+        </div>
+        <!-- 10. Estado -->
+        <div class="col-md-4">
+          <label class="form-label">Estado</label>
+          <select name="estado" class="form-select">
+            <option value="ACEPTADA">ACEPTADA</option>
+            <option value="RECHAZADA">RECHAZADA</option>
+          </select>
+        </div>
+        <!-- 11. Es repetición -->
+        <div class="col-md-4 d-flex align-items-center">
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" name="repeticion" value="1">
+            <label class="form-check-label">Es repetición</label>
+          </div>
+        </div>
+        <!-- 12. ID Prueba Anterior -->
+        <div class="col-md-4">
+          <label class="form-label">ID Prueba Anterior</label>
+          <input type="number" name="vinculada_a" class="form-control">
+        </div>
+        <!-- 13. Cilindros Geonic -->
+        <div class="col-md-4">
+          <label class="form-label">Cilindros Otros</label>
+          <input type="number" name="cilindros_geonic" class="form-control">
+        </div>
+        <!-- 14. Cilindros Incostas -->
+        <div class="col-md-4">
+          <label class="form-label">Cilindros Nuestros</label>
+          <input type="number" name="cilindros_incostas" class="form-control">
+        </div>
+
+        <!-- Campos específicos por rol -->
+        {% if role == 'control_de_calidad' %}
+          <!-- 15. Hora Salida -->
+          <div class="col-md-4">
+            <label class="form-label">Hora de Salida de Planta</label>
+            <input type="time" name="hora_salida" class="form-control" required>
+          </div>
+          <!-- 16. Horas por Diseño (numérico) -->
+          <div class="col-md-4">
+            <label class="form-label">Horas por Diseño</label>
+            <input type="number" step="0.1" name="hora_diseno" class="form-control" required>
+          </div>
+        {% endif %}
+
+        {% if role == 'vaciado' %}
+          <!-- 17. Hora Vaciado -->
+          <div class="col-md-4">
+            <label class="form-label">Hora de Vaciado</label>
+            <input type="time" name="hora_vaciado" class="form-control" required>
+          </div>
+        {% endif %}
+
+      </div>
+
+      <div class="mt-4 text-center">
+        <button type="submit" class="btn btn-primary me-2">Registrar</button>
+        <a href="{{ url_for('exportar') }}" class="btn btn-success">Exportar Excel</a>
+        {% if role in ['vaciado','admin'] %}
+          <a href="{{ url_for('vaciado') }}" class="btn btn-warning ms-2">Vista Vaciado</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}" class="btn btn-secondary ms-2">Cerrar Sesión</a>
+      </div>
+    </form>
+
+    <!-- Historial omitido para brevedad -->
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelectorAll('.toast').forEach(el => new bootstrap.Toast(el).show());
+  </script>
+</body>
+</html>

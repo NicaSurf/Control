@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat Grupal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .chat-container {max-width: 540px; margin: 0 auto;}
+    .bubble-me {background:#1877f2; color:#fff; border-radius:18px 18px 2px 18px; padding:8px 14px; margin-bottom:6px; display:inline-block;}
+    .bubble-them {background:#f0f2f5; color:#222; border-radius:18px 18px 18px 2px; padding:8px 14px; margin-bottom:6px; display:inline-block;}
+    .username {font-size:0.9em; color:#888;}
+    .timestamp {font-size:0.8em; color:#bbb;}
+    .msg-row {margin-bottom:2px;}
+    .scroll-area {height:340px; overflow-y:auto; background:#fff; border-radius:10px; padding:14px; box-shadow:0 1px 4px #0002;}
+    .msg-form {background:#f8f8fa;border-radius:10px;padding:10px;}
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container py-4 chat-container">
+    <div class="bg-primary text-white rounded-top p-3 mb-0 d-flex align-items-center justify-content-between">
+      <div>
+        <b>💬 Chat Grupal</b>
+        <span class="badge bg-warning text-dark ms-2">{{ rol|capitalize }}</span>
+      </div>
+      <a href="{{ url_for('index') }}" class="btn btn-light btn-sm">Volver</a>
+    </div>
+
+    <div class="scroll-area mb-2" id="chat-box">
+      {% for m in messages %}
+        <div class="msg-row {% if m.user == usuario %}text-end{% endif %}">
+          {% if m.user == usuario %}
+            <span class="bubble-me">
+              <span class="username">Yo</span><br>
+              {{ m.message|safe }}
+              <span class="timestamp ms-2">{{ m.timestamp }}</span>
+            </span>
+          {% else %}
+            <span class="bubble-them">
+              <span class="username">{{ m.user.split('@')[0]|capitalize }}</span><br>
+              {{ m.message|safe }}
+              <span class="timestamp ms-2">{{ m.timestamp }}</span>
+            </span>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="text-center text-muted my-3">No hay mensajes aún.</div>
+      {% endfor %}
+    </div>
+
+    <form method="post" action="{{ url_for('mensajes') }}" autocomplete="off" class="msg-form d-flex">
+      <input type="text" name="message" class="form-control me-2" placeholder="Escribe un mensaje..." maxlength="255" required>
+      <button class="btn btn-primary" type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Baja el scroll al último mensaje automáticamente
+    window.onload = function(){
+      var c = document.getElementById('chat-box');
+      c.scrollTop = c.scrollHeight;
+    };
+  </script>
+</body>
+</html>
